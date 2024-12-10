@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do List</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <div id="app" class="w-3/4 mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
+      <h1 class="text-2xl font-bold mb-4">To-Do List</h1>
+      <form id="todo-form" class="flex mb-4">
+        <input
+          type="text"
+          id="todo-input"
+          class="flex-1 p-2 border rounded"
+          placeholder="Add a new task..."
+          required
+        />
+        <button
+          type="submit"
+          class="ml-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Add
+        </button>
+      </form>
+      <div class="flex items-center mb-4">
+        <input type="checkbox" id="select-all" class="mr-2" />
+        <label for="select-all">Select All</label>
+      </div>
+      <button
+        id="delete-selected"
+        class="mb-4 p-2 bg-red-500 text-white rounded hover:bg-red-600"
+      >
+        Delete Selected
+      </button>
+      <ul id="todo-list"></ul>
+
+      <!-- Edit Modal -->
+      <div
+        id="edit-modal"
+        class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden justify-center items-center"
+      >
+        <div class="bg-white rounded-lg p-6 w-full max-w-md w-1/2 mx-auto">
+          <h2 class="text-xl font-bold mb-4">Edit Task</h2>
+          <input
+            type="text"
+            id="edit-input"
+            class="w-full p-2 border rounded mb-4"
+            required
+          />
+          <div class="flex justify-end">
+            <button
+              id="save-edit-button"
+              class="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Save
+            </button>
+            <button
+              id="close-edit-modal"
+              class="p-2 bg-gray-300 text-black rounded hover:bg-gray-400 ml-2"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+      <!--Trạng thái-->
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
