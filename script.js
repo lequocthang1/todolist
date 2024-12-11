@@ -134,8 +134,8 @@ function openEditModal(id) {
   currentEditingTodoId = id;
   const todoToEdit = todos.find((todo) => todo.id === id);
 
-  editInput.value = todoToEdit.text; // Set current task text in input
-  editModal.classList.remove("hidden"); // Show modal
+  editInput.value = todoToEdit.text;
+  editModal.classList.remove("hidden");
 }
 
 // Save edited task
@@ -157,9 +157,9 @@ saveEditButton.addEventListener("click", () => {
           todo.id === currentEditingTodoId ? updatedTodo : todo
         );
         renderTodos();
-        closeEditModal(); // Close modal after saving
-        currentEditingTodoId = null; // Reset editing ID
-        editInput.value = ""; // Clear input field
+        closeEditModal();
+        currentEditingTodoId = null;
+        editInput.value = "";
       });
   }
 });
@@ -168,7 +168,7 @@ saveEditButton.addEventListener("click", () => {
 closeEditModalButton.addEventListener("click", closeEditModal);
 
 function closeEditModal() {
-  editModal.classList.add("hidden"); // Hide modal
+  editModal.classList.add("hidden");
 }
 
 // Delete task
@@ -196,7 +196,7 @@ deleteSelectedButton.addEventListener("click", () => {
   ).then(() => {
     todos = todos.filter((todo) => !selectedIds.includes(todo.id.toString()));
     renderTodos();
-    selectAllCheckbox.checked = false; // Uncheck "Select All" after deletion
+    selectAllCheckbox.checked = false;
   });
 });
 
