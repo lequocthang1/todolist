@@ -16,7 +16,7 @@
         <input
           type="text"
           id="todo-input"
-          class="flex-1 p-2 border rounded"
+          class="flex-1 p-2 border rounded border-2 border-gray-300 p-2 hover:border-blue-500 focus:outline-none focus:border-blue-500"
           placeholder="Add a new task..."
           required
         />
@@ -44,7 +44,9 @@
         id="edit-modal"
         class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden justify-center items-center"
       >
-        <div class="bg-white rounded-lg p-6 w-full max-w-md w-1/2 mx-auto">
+        <div
+          class="bg-white rounded-lg p-6 w-full max-w-md w-1/2 mx-auto mt-96"
+        >
           <h2 class="text-xl font-bold mb-4">Edit Task</h2>
           <input
             type="text"
