@@ -7,22 +7,36 @@ const editModal = document.getElementById("edit-modal");
 const editInput = document.getElementById("edit-input");
 const saveEditButton = document.getElementById("save-edit-button");
 const closeEditModalButton = document.getElementById("close-edit-modal");
+const loadingOverlay = document.getElementById("loading");
+
+function showLoading() {
+  loadingOverlay.classList.remove("hidden");
+}
+
+function hideLoading() {
+  loadingOverlay.classList.add("hidden");
+}
 
 let todos = [];
 let currentEditingTodoId = null;
 
 // Fetch existing tasks from MockAPI
+showLoading();
 fetch("https://6752728bd1983b9597b6399b.mockapi.io/api/List")
   .then((response) => response.json())
   .then((data) => {
     todos = data;
     renderTodos();
-  });
+  })
+  .catch((error) => console.error("Error fetching todos:", error))
+  .finally(() => hideLoading()); // Ẩn loading khi kết thúc
 
 // Add new task
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  const newTodo = { text: input.value, completed: false };
+  const newTodo = { text: input.value };
+
+  showLoading();
 
   fetch("https://6752728bd1983b9597b6399b.mockapi.io/api/List", {
     method: "POST",
@@ -34,7 +48,9 @@ form.addEventListener("submit", (e) => {
       todos.push(todo);
       renderTodos();
       input.value = "";
-    });
+    })
+    .catch((error) => console.error("Error adding todo:", error))
+    .finally(() => hideLoading()); // Ẩn loading
 });
 
 // Render tasks
@@ -43,7 +59,7 @@ function renderTodos() {
   todoList.innerHTML = "";
   todos.forEach((todo) => {
     const li = document.createElement("li");
-    li.className = "flex justify-between items-center mb-4 p-3"; // Increased margin-bottom and added padding
+    li.className = "flex justify-between items-center mb-4 p-3";
 
     const leftContainer = document.createElement("div");
     leftContainer.className = "flex items-center";
@@ -65,40 +81,58 @@ function renderTodos() {
     buttonContainer.className = "flex space-x-2";
 
     // Nút trạng thái
-    // Nút trạng thái
     const statusButton = document.createElement("button");
 
-    // Xác định nội dung nút trạng thái
-    const statusValue =
-      todo.status &&
-      typeof todo.status === "string" &&
-      todo.status.trim() !== ""
-        ? todo.status.trim()
-        : "Trạng thái";
+    // Thiết lập nội dung và màu sắc cho nút trạng thái dựa trên giá trị hiện tại
+    statusButton.textContent = todo.status || "Trạng thái"; // Nếu không có trạng thái, hiển thị "Trạng thái"
 
-    statusButton.textContent = statusValue;
-    statusButton.className =
-      "w-32 p-1 bg-gray-300 text-black rounded hover:bg-gray-400 whitespace-nowrap"; // Set fixed width and prevent wrapping
+    switch (todo.status) {
+      case "Hoàn thành":
+        statusButton.className = "w-32 p-1 bg-green-500 text-white rounded"; // Màu xanh cho hoàn thành
+        break;
+      case "Đang làm":
+        statusButton.className = "w-32 p-1 bg-blue-400 text-white rounded"; // Màu vàng cho đang làm
+        break;
+      case "Hoãn":
+        statusButton.className = "w-32 p-1 bg-purple-900 text-white rounded"; // Màu đỏ cho hoãn
+        break;
+      default:
+        statusButton.className = "w-32 p-1 bg-gray-300 text-black rounded"; // Mặc định
+    }
 
     // Tạo dropdown
+    const options = ["Hoàn thành", "Đang làm", "Hoãn"];
     const dropdownMenu = document.createElement("ul");
     dropdownMenu.className =
-      "hidden absolute bg-white shadow-lg rounded-lg mt-1"; // Ẩn ban đầu
-    dropdownMenu.style.listStyleType = "none"; // Không có dấu đầu dòng
-
-    // Các tùy chọn cho dropdown
-    const options = ["Hoàn thành", "Đang làm", "Hoãn"];
+      "hidden absolute bg-white shadow-lg rounded-lg mt-1";
 
     options.forEach((option) => {
       const listItem = document.createElement("li");
       listItem.textContent = option;
       listItem.className = "p-2 hover:bg-gray-200 cursor-pointer";
 
-      // Gán sự kiện click để thay đổi nội dung nút và gửi lên API
+      // Gán sự kiện click để thay đổi nội dung nút và cập nhật màu sắc
       listItem.addEventListener("click", () => {
         statusButton.textContent = option; // Thay đổi nội dung của nút trạng thái
 
+        // Thay đổi màu sắc của nút dựa trên tùy chọn đã chọn
+        switch (option) {
+          case "Hoàn thành":
+            statusButton.className = "w-32 p-1 bg-green-500 text-white rounded";
+            break;
+          case "Đang làm":
+            statusButton.className = "w-32 p-1 bg-blue-400 text-white rounded";
+            break;
+          case "Hoãn":
+            statusButton.className =
+              "w-32 p-1 bg-purple-900 text-white rounded";
+            break;
+          default:
+            statusButton.className = "w-32 p-1 bg-gray-300 text-black rounded";
+        }
+
         // Cập nhật trạng thái lên API
+        showLoading();
         fetch(
           `https://6752728bd1983b9597b6399b.mockapi.io/api/List/${todo.id}`,
           {
@@ -113,15 +147,15 @@ function renderTodos() {
               t.id === updatedTodo.id ? updatedTodo : t
             );
             renderTodos(); // Render lại danh sách sau khi cập nhật
-          });
-
+          })
+          .catch((error) => console.error("Error updating status:", error))
+          .finally(() => hideLoading()); // Ẩn loading
         dropdownMenu.classList.add("hidden"); // Ẩn dropdown sau khi chọn
       });
 
       dropdownMenu.appendChild(listItem);
     });
 
-    // Thêm sự kiện click cho nút trạng thái
     statusButton.addEventListener("click", () => {
       dropdownMenu.classList.toggle("hidden"); // Chuyển đổi giữa hiển thị và ẩn
     });
@@ -168,7 +202,7 @@ function openEditModal(id) {
 saveEditButton.addEventListener("click", () => {
   if (currentEditingTodoId) {
     const updatedText = editInput.value;
-
+    showLoading();
     fetch(
       `https://6752728bd1983b9597b6399b.mockapi.io/api/List/${currentEditingTodoId}`,
       {
@@ -186,7 +220,9 @@ saveEditButton.addEventListener("click", () => {
         closeEditModal(); // Close modal after saving
         currentEditingTodoId = null; // Reset editing ID
         editInput.value = ""; // Clear input field
-      });
+      })
+      .catch((error) => console.error("Error updating status:", error))
+      .finally(() => hideLoading()); // Ẩn loading
   }
 });
 
@@ -199,12 +235,16 @@ function closeEditModal() {
 
 // Delete task
 function deleteTodo(id) {
+  showLoading();
   fetch(`https://6752728bd1983b9597b6399b.mockapi.io/api/List/${id}`, {
     method: "DELETE",
-  }).then(() => {
-    todos = todos.filter((todo) => todo.id !== id);
-    renderTodos();
-  });
+  })
+    .then(() => {
+      todos = todos.filter((todo) => todo.id !== id);
+      renderTodos();
+    })
+    .catch((error) => console.error("Error deleting todo:", error))
+    .finally(() => hideLoading()); // Ẩn loading
 }
 
 // Delete selected tasks
@@ -212,27 +252,33 @@ deleteSelectedButton.addEventListener("click", () => {
   const selectedIds = Array.from(
     todoList.querySelectorAll("input[type=checkbox]:checked")
   ).map((checkbox) => checkbox.value);
-
+  showLoading();
   Promise.all(
     selectedIds.map((id) =>
       fetch(`https://6752728bd1983b9597b6399b.mockapi.io/api/List/${id}`, {
         method: "DELETE",
       })
     )
-  ).then(() => {
-    todos = todos.filter((todo) => !selectedIds.includes(todo.id.toString()));
-    renderTodos();
-    selectAllCheckbox.checked = false; // Uncheck "Select All" after deletion
-  });
+  )
+    .then(() => {
+      todos = todos.filter((todo) => !selectedIds.includes(todo.id.toString()));
+      renderTodos();
+      selectAllCheckbox.checked = false; // Uncheck "Select All" after deletion
+    })
+    .catch((error) => console.error("Error deleting todo:", error))
+    .finally(() => hideLoading()); // Ẩn loading
 });
 
 // Select all functionality
 selectAllCheckbox.addEventListener("change", (e) => {
   const checkboxes = todoList.querySelectorAll("input[type=checkbox]");
 
-  checkboxes.forEach((checkbox) => {
-    checkbox.checked = e.target.checked;
-  });
+  checkboxes
+    .forEach((checkbox) => {
+      checkbox.checked = e.target.checked;
+    })
+    .catch((error) => console.error("Error deleting todo:", error))
+    .finally(() => hideLoading()); // Ẩn loading
 });
 
 // Update the state of the "Select All" checkbox based on individual checkboxes

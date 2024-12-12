@@ -1,0 +1,18 @@
+/* Định dạng spinner nếu bạn không dùng Tailwind */
+.spinner {
+  border: 4px solid #f3f3f3; /* Viền xám nhạt */
+  border-top: 4px solid #3498db; /* Viền xanh dương */
+  border-radius: 50%; /* Hình tròn */
+  width: 50px; /* Kích thước */
+  height: 50px;
+  animation: spin 1s linear infinite; /* Hiệu ứng xoay */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

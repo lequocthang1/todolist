@@ -8,6 +8,7 @@
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body class="bg-gray-100">
     <div id="app" class="w-3/4 mx-auto mt-10 p-4 bg-white rounded-lg shadow-lg">
@@ -70,7 +71,14 @@
           </div>
         </div>
       </div>
-      <!--Trạng thái-->
+      <div
+        id="loading"
+        class="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 hidden"
+      >
+        <div
+          class="spinner border-4 border-t-4 border-blue-500 rounded-full w-16 h-16 animate-spin"
+        ></div>
+      </div>
     </div>
 
     <script src="script.js"></script>
